@@ -1,0 +1,4 @@
+venv
+.idea
+alembic/versions
+app/core/config.py
