@@ -46,6 +46,14 @@ def get_user(db: Session, user_id: int):
         return False
 
 
+def get_user_by_email(db: Session, email: str):
+    db_user = db.query(User).filter(User.email == email).first()
+    if db_user:
+        return db_user
+    else:
+        return False
+
+
 def create_user(db: Session, user: user_schema.UserCreate):
     instance = db.query(User).filter(User.email == user.email).first()
     if instance:
@@ -68,3 +76,8 @@ def create_user(db: Session, user: user_schema.UserCreate):
             user_dict["photo"] = db_user.photo.__dict__
         user = user_schema.UserOut(**user_dict)
         return user
+
+
+def change_user_password(db: Session, user: User, new_password: str):
+    user.password = new_password
+    db.commit()

@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.crud import user as crud_user
 from app.schemas import request as request_schema, \
     response as response_schema, token as token_schema
-from app.utils import security
+from app.utils import security, email_sending
 
 
 router = APIRouter(prefix="",
@@ -16,6 +16,50 @@ router = APIRouter(prefix="",
 async def refresh(refresh_token_data: dict = Depends(security.decode_refresh_token)):
     access_token = security.create_access_token(refresh_token_data)
     return {"accessToken": access_token, "tokenType": "bearer"}
+
+
+@router.post("/password-recovery", response_model=response_schema.ResponseSuccess,
+             tags=[], summary="Recovery password by email",
+             responses={400: {"model": response_schema.ResponseCustomError}})
+def recover_password(email: str = Body(embed=True),
+                     db: Session = Depends(get_db)):
+    user = crud_user.get_user_by_email(db, email=email)
+    if not user:
+        raise HTTPException(
+            status_code=400,
+            detail="the user with this email does not exist in the system.",
+        )
+    token_data = {"sub": "email_password_recovery", "email": str(email)}
+    password_reset_token = security.create_email_token(data=token_data)
+    print(password_reset_token)
+    if not email_sending.send_reset_password_email(email_to=email, token=password_reset_token):
+        raise HTTPException(
+            status_code=400,
+            detail="smtp error"
+        )
+    return {"message": "success"}
+
+
+@router.post("/reset-password", response_model=response_schema.ResponseSuccess,
+             tags=[], summary="Reset password by email link",
+             responses={400: {"model": response_schema.ResponseCustomError}})
+def reset_password(token: str = Body(),
+                   new_password: str = Body(),
+                   db: Session = Depends(get_db)):
+    token_data = security.decode_email_token(token)
+    if not token_data:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    try:
+        sub = token_data["sub"]
+        email = token_data["email"]
+        assert sub == "email_password_recovery"
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid token")
+    user = crud_user.get_user_by_email(db, email=email)
+    if not user:
+        raise HTTPException(status_code=400, detail="the user with this email does not exist in the system.")
+    crud_user.change_user_password(db=db, user=user, new_password=security.hash_password(new_password))
+    return {"message": "success"}
 
 
 @router.post("/login", response_model=response_schema.ResponseLogin, tags=[], summary="",
