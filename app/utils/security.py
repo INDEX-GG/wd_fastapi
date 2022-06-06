@@ -116,3 +116,14 @@ def check_vk_data(vk_data: request_schema.RequestVkData):
     if check_string_md5 != vk_data.auth_data.hash:
         return False
     return True
+
+
+def decode_apple_token(token: str):
+    try:
+        print()
+        print(token)
+        payload = jwt.decode(token, key="", algorithms=["RS256"], audience="", options={"verify_signature": False})
+        return payload
+    except Exception as e:
+        print(e)
+        return False

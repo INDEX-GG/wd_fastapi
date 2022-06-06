@@ -86,6 +86,7 @@ async def login_google(google_data: request_schema.RequestGoogleData,
     google_id = token_data["sub"]
     print(token_data)
     print(google_id)
+    return {"refreshToken": "fake_rt", "accessToken": "fake_at", "tokenType": "Bearer"}
 
 
 @router.post("/login_vk", response_model=response_schema.ResponseLogin, tags=[], summary="Sign in with VK",
@@ -97,3 +98,16 @@ async def login_google(vk_data: request_schema.RequestVkData,
     vk_id = vk_data.auth_data.uid
     print(vk_data.auth_data)
     print(vk_id)
+    return {"refreshToken": "fake_rt", "accessToken": "fake_at", "tokenType": "Bearer"}
+
+
+@router.post("/login_apple", response_model=response_schema.ResponseLogin, tags=[], summary="Sign in with Apple",
+             responses={400: {"model": response_schema.ResponseCustomError}})
+async def login_google(apple_data: request_schema.RequestAppleData,
+                       db: Session = Depends(get_db)):
+    # if not security.check_vk_data(vk_data):
+    #     raise HTTPException(status_code=400, detail="Invalid data")
+    print(apple_data)
+    print()
+    print(security.decode_apple_token(apple_data.id_token))
+    return {"refreshToken": "fake_rt", "accessToken": "fake_at", "tokenType": "Bearer"}
