@@ -122,7 +122,8 @@ def decode_apple_token(token: str):
     try:
         print()
         print(token)
-        payload = jwt.decode(token, key="", algorithms=["RS256"], audience="", options={"verify_signature": False})
+        payload = jwt.decode(token, key="", algorithms=["RS256"], audience=settings.apple_client_id,
+                             options={"verify_signature": False})
         return payload
     except Exception as e:
         print(e)
