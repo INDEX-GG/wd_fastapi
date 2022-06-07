@@ -7,7 +7,7 @@ import datetime
 from passlib.context import CryptContext
 from app.core.config import settings
 from app.api import dependencies
-from app.schemas import request as request_schema
+from app.schemas import request as request_schema, token as token_schema
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -104,7 +104,8 @@ def verify_password(plain_password, hashed_password):
 
 def decode_google_token(token: str):
     try:
-        token_info = id_token.verify_oauth2_token(token, requests.Request(), settings.google_Client_ID)
+        payload = id_token.verify_oauth2_token(token, requests.Request(), settings.google_Client_ID)
+        token_info = token_schema.GoogleTokenData(**payload)
         return token_info
     except Exception:
         return False
@@ -120,11 +121,9 @@ def check_vk_data(vk_data: request_schema.RequestVkData):
 
 def decode_apple_token(token: str):
     try:
-        print()
-        print(token)
-        payload = jwt.decode(token, key="", algorithms=["RS256"], audience=settings.apple_client_id,
-                             options={"verify_signature": False})
-        return payload
+        payload = jwt.get_unverified_claims(token)
+        token_info = token_schema.AppleTokenData(**payload)
+        return token_info
     except Exception as e:
         print(e)
         return False

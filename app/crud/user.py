@@ -4,7 +4,7 @@ import uuid
 import datetime
 from app.api.dependencies import get_db
 from app.api import dependencies
-from app.db.db_models import User
+from app.db.db_models import User, Photo
 from app.schemas import user as user_schema
 from app.utils import security
 
@@ -54,6 +54,30 @@ def get_user_by_email(db: Session, email: str):
         return False
 
 
+def get_user_by_google_id(db: Session, google_id: int):
+    db_user = db.query(User).filter(User.googleId == google_id).first()
+    if db_user:
+        return db_user
+    else:
+        return False
+
+
+def get_user_by_apple_id(db: Session, apple_id: str):
+    db_user = db.query(User).filter(User.appleId == apple_id).first()
+    if db_user:
+        return db_user
+    else:
+        return False
+
+
+def get_user_by_vk_id(db: Session, vk_id: int):
+    db_user = db.query(User).filter(User.vkId == vk_id).first()
+    if db_user:
+        return db_user
+    else:
+        return False
+
+
 def create_user(db: Session, user: user_schema.UserCreate):
     instance = db.query(User).filter(User.email == user.email).first()
     if instance:
@@ -66,6 +90,48 @@ def create_user(db: Session, user: user_schema.UserCreate):
                        phoneVerified=False,
                        password=security.hash_password(user.password),
                        roleId=1,
+                       createdAt=datetime.datetime.utcnow())
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        user_dict = db_user.__dict__
+        user_dict["role"] = db_user.role.__dict__
+        if db_user.photo:
+            user_dict["photo"] = db_user.photo.__dict__
+        user = user_schema.UserOut(**user_dict)
+        return user
+
+
+def create_user_oauth(db: Session, user: user_schema.UserCreateOauth):
+    instance = db.query(User).filter(User.email == user.email).first()
+    if instance and user.email:
+        db_user = db.query(User).filter(User.email == user.email).first()
+        db_user.googleId = user.googleId
+        db.commit()
+        user_dict = db_user.__dict__
+        user_dict["role"] = db_user.role.__dict__
+        if db_user.photo:
+            user_dict["photo"] = db_user.photo.__dict__
+        user = user_schema.UserOut(**user_dict)
+        return user
+    else:
+        if user.photo:
+            db_photo = Photo(url=user.photo)
+            db.add(db_photo)
+            db.commit()
+            db.refresh(db_photo)
+            user.photoId = db_photo.id
+        db_user = User(uuid=uuid.uuid4(),
+                       email=user.email,
+                       name=user.name,
+                       surname=user.surname,
+                       emailVerified=user.emailVerify,
+                       googleId=user.googleId,
+                       vkId=user.vkId,
+                       appleId=user.appleId,
+                       phoneVerified=False,
+                       roleId=1,
+                       photoId=user.photoId,
                        createdAt=datetime.datetime.utcnow())
         db.add(db_user)
         db.commit()

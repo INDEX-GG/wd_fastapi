@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.crud import user as crud_user
 from app.schemas import request as request_schema, \
-    response as response_schema, token as token_schema
+    response as response_schema, token as token_schema, user as user_schema
 from app.utils import security, email_sending
 
 
@@ -83,10 +83,18 @@ async def login_google(google_data: request_schema.RequestGoogleData,
     token_data = security.decode_google_token(str(google_data.token))
     if not token_data:
         raise HTTPException(status_code=400, detail="Invalid token")
-    google_id = token_data["sub"]
-    print(token_data)
-    print(google_id)
-    return {"refreshToken": "fake_rt", "accessToken": "fake_at", "tokenType": "Bearer"}
+    google_id = token_data.sub
+    user_data = user_schema.UserCreateOauth(googleId=google_id, email=token_data.email, name=token_data.given_name,
+                                            surname=token_data.family_name, photo=token_data.picture)
+    check_user = crud_user.get_user_by_google_id(db, google_id=google_id)
+    if not check_user:
+        user = crud_user.create_user_oauth(user=user_data, db=db)
+    else:
+        user = check_user
+    token_data = {"sub": "user", "user_id": str(user.id)}
+    access_token = security.create_access_token(data=token_data)
+    refresh_token = security.create_refresh_token(data=token_data)
+    return {"accessToken": access_token, "refreshToken": refresh_token, "tokenType": "bearer"}
 
 
 @router.post("/login_vk", response_model=response_schema.ResponseLogin, tags=[], summary="Sign in with VK",
@@ -96,18 +104,35 @@ async def login_google(vk_data: request_schema.RequestVkData,
     if not security.check_vk_data(vk_data):
         raise HTTPException(status_code=400, detail="Invalid data")
     vk_id = vk_data.auth_data.uid
-    print(vk_data.auth_data)
-    print(vk_id)
-    return {"refreshToken": "fake_rt", "accessToken": "fake_at", "tokenType": "Bearer"}
+    user_data = user_schema.UserCreateOauth(vkId=vk_id, name=vk_data.auth_data.first_name,
+                                            surname=vk_data.auth_data.last_name, photo=vk_data.auth_data.photo)
+    check_user = crud_user.get_user_by_vk_id(db, vk_id=vk_id)
+    if not check_user:
+        user = crud_user.create_user_oauth(user=user_data, db=db)
+    else:
+        user = check_user
+    token_data = {"sub": "user", "user_id": str(user.id)}
+    access_token = security.create_access_token(data=token_data)
+    refresh_token = security.create_refresh_token(data=token_data)
+    return {"accessToken": access_token, "refreshToken": refresh_token, "tokenType": "bearer"}
 
 
 @router.post("/login_apple", response_model=response_schema.ResponseLogin, tags=[], summary="Sign in with Apple",
              responses={400: {"model": response_schema.ResponseCustomError}})
 async def login_google(apple_data: request_schema.RequestAppleData,
                        db: Session = Depends(get_db)):
-    # if not security.check_vk_data(vk_data):
-    #     raise HTTPException(status_code=400, detail="Invalid data")
-    print(apple_data)
-    print()
-    print(security.decode_apple_token(apple_data.id_token))
-    return {"refreshToken": "fake_rt", "accessToken": "fake_at", "tokenType": "Bearer"}
+    token_data = security.decode_apple_token(apple_data.id_token)
+    if not token_data:
+        raise HTTPException(status_code=400, detail="Invalid data")
+    apple_id = token_data.sub
+    user_data = user_schema.UserCreateOauth(appleId=apple_id, email=apple_data.email, name=apple_data.firstName,
+                                            surname=apple_data.lastName)
+    check_user = crud_user.get_user_by_apple_id(db, apple_id=apple_id)
+    if not check_user:
+        user = crud_user.create_user_oauth(user=user_data, db=db)
+    else:
+        user = check_user
+    token_data = {"sub": "user", "user_id": str(user.id)}
+    access_token = security.create_access_token(data=token_data)
+    refresh_token = security.create_refresh_token(data=token_data)
+    return {"accessToken": access_token, "refreshToken": refresh_token, "tokenType": "bearer"}

@@ -22,6 +22,21 @@ class UserCreate(BaseModel):
         orm_mode = True
 
 
+class UserCreateOauth(BaseModel):
+    email: str | None = None
+    name: str | None = None
+    surname: str | None = None
+    emailVerify: bool = False
+    photo: str | None = None
+    photoId: int | None = None
+    googleId: int | None = None
+    vkId: int | None = None
+    appleId: int | None = None
+
+    class Config:
+        orm_mode = True
+
+
 class UserBase(BaseModel):
     email: str | None = None
     phone: int | None = None
@@ -31,9 +46,9 @@ class UserBase(BaseModel):
     photo: int | None = None
     rating: int | None = None
     role: int | None = None
-    google_id: int | None = None
-    vk_id: int | None = None
-    apple_id: int | None = None
+    googleId: int | None = None
+    vkId: int | None = None
+    appleId: int | None = None
     updatedAt: datetime.datetime | None = None
     lastLoginAt: datetime.datetime | None = None
     deletedAt: datetime.datetime | None = None
@@ -47,7 +62,7 @@ class UserBase(BaseModel):
 class UserOut(UserBase):
     id: int
     uuid: UUID
-    email: str
+    email: str | None = None
     emailVerified: bool
     phoneVerified: bool
     createdAt: datetime.datetime

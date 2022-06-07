@@ -8,9 +8,9 @@ class User(Base):
     __tablename__ = "users"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
     uuid = Column("uuid", UUID(as_uuid=True), primary_key=True, unique=True, nullable=False)
-    google_id = Column("google_id", Integer, unique=True)
-    vk_id = Column("vk_id", Integer, unique=True)
-    apple_id = Column("apple_id", Integer, unique=True)
+    googleId = Column("google_id", String, unique=True)
+    vkId = Column("vk_id", String, unique=True)
+    appleId = Column("apple_id", String, unique=True)
     email = Column("email", String, unique=True)
     emailVerified = Column("email_verified", BOOLEAN, nullable=False)
     phone = Column("phone", Integer, unique=True)
