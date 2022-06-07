@@ -54,7 +54,7 @@ def get_user_by_email(db: Session, email: str):
         return False
 
 
-def get_user_by_google_id(db: Session, google_id: int):
+def get_user_by_google_id(db: Session, google_id: str):
     db_user = db.query(User).filter(User.googleId == google_id).first()
     if db_user:
         return db_user
@@ -70,8 +70,8 @@ def get_user_by_apple_id(db: Session, apple_id: str):
         return False
 
 
-def get_user_by_vk_id(db: Session, vk_id: int):
-    db_user = db.query(User).filter(User.vkId == vk_id).first()
+def get_user_by_vk_id(db: Session, vk_id: str):
+    db_user = db.query(User).filter(User.vkId == str(vk_id)).first()
     if db_user:
         return db_user
     else:
