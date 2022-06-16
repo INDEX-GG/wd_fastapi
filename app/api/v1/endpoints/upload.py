@@ -1,7 +1,7 @@
 from fastapi import APIRouter,File, UploadFile, HTTPException
 from typing import List
+import uuid
 from app.schemas import response as response_schema
-import datetime
 
 
 router = APIRouter(prefix="",
@@ -13,12 +13,11 @@ async def upload(files: List[UploadFile] = File(...)):
     if (len(files) > 3):
         raise HTTPException(
             status_code=400,
-            detail="a lot of files.",
-        )
+            detail="a lot of files.")
     for file in files:
         try:
             contents = await file.read()
-            with open("./files/" +datetime.datetime.now().strftime('%m%d%Y') + file.filename, 'wb') as f:
+            with open("./files/"+ str(uuid.uuid1()) + file.filename , "wb+") as f:
                 await f.write(contents)
         except Exception:
             return {"message": "There was an error uploading the file(s)"}
