@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, FLOAT
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 import sqlalchemy
@@ -32,7 +32,7 @@ class User(Base):
 
     photo = relationship("Photo", back_populates="owner")
     role = relationship("Role", back_populates="owner")
-    vacancy = relationship("Vacancies");
+    #vacancy = relationship("Vacancy");
 
 
 class Photo(Base):
@@ -89,15 +89,15 @@ class Vacancy(Base):
     __tablename__ = "vacancies"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
     title = Column("title", sqlalchemy.String(150), nullable=False)
-    title = Column("title", sqlalchemy.String(150), nullable=False)
-    description = Column("description", sqlalchemy.String(3000), nullable=False)
+    description = Column("description", sqlalchemy.String(3000))
     budget = Column("budget", Integer , default=None)
     name = Column("name", String)
     email = Column("email", String)
     phone = Column("phone", Integer)
+    date = Column("date", TIMESTAMP)
 
-    link = relationship("Files")
-    user_id = Column(Integer, ForeignKey("users.id"))
+    links = relationship("File")
+    #user_id = Column(Integer, ForeignKey("users.id"))
 
 class File(Base):
     __tablename__ = "files"

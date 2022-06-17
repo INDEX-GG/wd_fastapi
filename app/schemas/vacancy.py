@@ -1,5 +1,7 @@
 from typing import List
 from pydantic import BaseModel
+import datetime
+
 
 class VacancyBase(BaseModel):
     user_id : int
@@ -9,7 +11,8 @@ class VacancyBase(BaseModel):
     name: str | None = None
     email: str | None = None
     phone: int | None = None
-    files: List[str] | None= None
+    date: datetime.datetime | None = None
+    #files: List[str] | None= None
 
 #из БД
 class Vacancy (VacancyBase):
@@ -17,6 +20,18 @@ class Vacancy (VacancyBase):
 
     class Config:
         orm_mode = True
+
+class VacancyCreate(BaseModel):
+    title: str
+    description: str | None = None
+    budget: int | None = None
+    name: str | None = None
+    email: str | None = None
+    phone: int | None = None
+    #files: List[str] | None = None
+
+    class Config:
+        orm_mode : True
 
 class Vacancies (BaseModel):
     vacancies : List[Vacancy]
