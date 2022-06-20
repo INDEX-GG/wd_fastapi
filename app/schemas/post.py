@@ -3,6 +3,16 @@ from pydantic import BaseModel
 import datetime
 
 
+class PostCreate(BaseModel):
+    title: str
+    description: str | None = None
+    priceAmount: int | None = None
+    priceCurrency: str | None = None
+
+    class Config:
+        orm_mode = True
+
+
 class PostsBase(BaseModel):
     title: str
     description: str | None = None

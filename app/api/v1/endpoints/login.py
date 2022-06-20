@@ -103,7 +103,7 @@ async def login_google(vk_data: request_schema.RequestVkData,
                        db: Session = Depends(get_db)):
     if not security.check_vk_data(vk_data):
         raise HTTPException(status_code=400, detail="Invalid data")
-    vk_id = vk_data.auth_data.uid
+    vk_id = str(vk_data.auth_data.uid)
     user_data = user_schema.UserCreateOauth(vkId=vk_id, name=vk_data.auth_data.first_name,
                                             surname=vk_data.auth_data.last_name, photo=vk_data.auth_data.photo)
     check_user = crud_user.get_user_by_vk_id(db, vk_id=vk_id)
