@@ -97,7 +97,6 @@ class Vacancy(Base):
     date = Column("date", TIMESTAMP)
 
     links = relationship("File")
-    #user_id = Column(Integer, ForeignKey("users.id"))
 
 class File(Base):
     __tablename__ = "files"
