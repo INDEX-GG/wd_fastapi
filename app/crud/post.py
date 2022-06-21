@@ -1,7 +1,9 @@
+import datetime
+
 from sqlalchemy import or_, nullslast
 from sqlalchemy.orm import Session
 from enum import Enum
-from app.db.db_models import Post
+from app.db.db_models import Post, Vacancy
 from app.schemas import post as post_schema
 
 
@@ -31,7 +33,7 @@ def get_posts_page_by_page(db: Session,
         query = query.filter(Post.title.ilike("%" + search_string + "%"))
     match sort:
         case SortValues.default.name:
-            query = query.order_by(Post.date.desc())
+            query = query.order_by(nullslast(Post.priority.desc()), Post.date.desc())
         case SortValues.new.name:
             query = query.order_by(Post.date.desc())
         case SortValues.cheaper.name:
@@ -43,3 +45,19 @@ def get_posts_page_by_page(db: Session,
         posts_count = query.count()
     posts = query.offset(offset).limit(page_limit).all()
     return post_schema.Posts(posts=posts, postsCount=posts_count)
+
+
+def create_post(db: Session,  vacancy: Vacancy):
+    currency = None
+    if vacancy.budget:
+        currency = "rub"
+    db_post = Post(title=vacancy.title,
+                   link="https://workdirect.ru/vacancies/{}".format(vacancy.id),
+                   description=vacancy.description,
+                   priceAmount=vacancy.budget,
+                   priceCurrency=currency,
+                   date=datetime.datetime.utcnow(),
+                   source="https://workdirect.ru/",
+                   priority=5)
+    db.add(db_post)
+    db.commit()

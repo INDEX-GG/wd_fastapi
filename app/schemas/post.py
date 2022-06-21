@@ -5,6 +5,7 @@ import datetime
 
 class PostCreate(BaseModel):
     title: str
+    link: str
     description: str | None = None
     priceAmount: int | None = None
     priceCurrency: str | None = None

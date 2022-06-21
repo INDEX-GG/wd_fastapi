@@ -61,6 +61,7 @@ class Post(Base):
     date = Column("date", TIMESTAMP)
     source = Column("source", String)
     parseDate = Column("parse_date", TIMESTAMP)
+    priority = Column("priority", Integer)
 
 
 class Jobs(Base):

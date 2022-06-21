@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, Depends, File, HTTPException
 from typing import List, Optional
 from app.api.dependencies import get_db
-from app.crud import vacancy as vacancy_crud, file as file_crud, user as user_crud
+from app.crud import vacancy as vacancy_crud, file as file_crud, user as user_crud, post as post_crud
 from app.schemas import vacancy as vacancy_schema, response as response_schema, user as user_schema
 from sqlalchemy.orm import Session
 
@@ -31,5 +31,6 @@ async def create_vacancy(vacancy: vacancy_schema.VacancyCreate = Depends(),
                          current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
                          db: Session = Depends(get_db)):
     new_vacancy = vacancy_crud.create_vacancy(db=db, vacancy=vacancy, user_id=current_user.id)
+    post_crud.create_post(db=db, vacancy=new_vacancy)
     await file_crud.save_files(db=db, files=files, vacancy_id=new_vacancy.id)
     return {"message": "success"}
