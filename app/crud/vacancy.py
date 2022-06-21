@@ -2,6 +2,7 @@ import datetime
 from typing import List
 from sqlalchemy.orm import Session
 from enum import Enum
+import os
 from app.db.db_models import Vacancy, File
 from app.schemas import vacancy as vacancy_schema
 
@@ -39,7 +40,7 @@ def get_vacancy_by_id(db: Session, vacancy_id: int):
 def get_vacancy_out(vacancy: Vacancy, files: List[File]):
     vacancy_dict = vacancy.__dict__
     vacancy_dict["user"] = vacancy.user.__dict__
-    files_dicts = [i.__dict__ for i in files]
+    files_dicts = [i.__dict__ for i in files if os.path.exists(i.patch)]
     vacancy_dict["files"] = files_dicts
     vacancy_out = vacancy_schema.VacancyOut(**vacancy_dict)
     return vacancy_out
