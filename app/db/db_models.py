@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, 
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from sqlalchemy.schema import Table
 
 
 class User(Base):
@@ -32,6 +33,7 @@ class User(Base):
     photo = relationship("Photo", back_populates="owner")
     role = relationship("Role", back_populates="owner")
     vacancies = relationship("Vacancy", back_populates="user")
+    post = relationship("Post")
 
 
 class Photo(Base):
@@ -106,3 +108,9 @@ class File(Base):
     filename = Column("filename", String)
     patch = Column("patch", String)
     vacancyId = Column("vacancy_id", Integer, ForeignKey("vacancies.id"))
+
+##follow много ко многим user_id ,  {id , userid, id_follow_ post}
+class Favorites(Base):
+    __tablename__ = "favorites",
+    userId =Column("user_id", ForeignKey("users.id")),
+    objId = Column("obj_id", ForeignKey("posts.id"))
