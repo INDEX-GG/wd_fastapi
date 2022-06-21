@@ -21,3 +21,4 @@ async def create_favorite(current_user: user_schema.UserOut = Depends(user_crud.
                           db: Session = Depends(get_db)):
 
     return 0
+#aaa
