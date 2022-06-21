@@ -39,4 +39,4 @@ async def create_vacancy(vacancy: vacancy_schema.VacancyCreate = Depends(),
         except Exception as e:
             print(e)
             raise HTTPException(status_code=400, detail="uploading the file(s) error")
-    return new_vacancy
+    return new_vacancy.id

@@ -12,7 +12,7 @@ def create_file_to_db(db: Session, path: str, vacancy_id: int):
 
 def get_files(db: Session, vacancy_id: int):
     query = db.query(File)
-    query = query.filter(File.vacancy_id == vacancy_id)
+    query = query.filter(File.vacancyId == vacancy_id)
     return query.all()
 
 

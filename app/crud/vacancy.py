@@ -28,4 +28,8 @@ def create_vacancy(db: Session,  vacancy: vacancy_schema.VacancyCreate):
 
 
 def get_vacancy_by_id(db: Session, vacancy_id: int):
-    return db.query(Vacancy).get(vacancy_id)
+    db_vacancy = db.query(Vacancy).filter(Vacancy.id == vacancy_id).first()
+    if db_vacancy:
+        return db_vacancy
+    else:
+        return False
