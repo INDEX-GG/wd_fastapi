@@ -6,3 +6,5 @@ services:
     restart: always
     ports:
       - 5880:8000
+    volumes:
+      - /var/www/work_direct_static_files:/code/files/
