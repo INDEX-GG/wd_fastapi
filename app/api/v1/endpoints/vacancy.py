@@ -13,7 +13,7 @@ router = APIRouter(prefix="/vacancies",
                    tags=["Vacancies"])
 
 
-@router.get("/vacancies/{vacancy_id}")
+@router.get("/{vacancy_id}")
 async def get_vacancy_by_id(vacancy_id: int, db: Session = Depends(get_db)):
     db_vacancy = crud_vacancy.get_vacancy_by_id(db, vacancy_id)
     file_list = crud_file.get_files(db, vacancy_id)
@@ -21,7 +21,7 @@ async def get_vacancy_by_id(vacancy_id: int, db: Session = Depends(get_db)):
             "links": file_list}
 
 
-@router.post("/vacancies", summary=" create vacancy  & Uploads files")
+@router.post("", summary=" create vacancy  & Uploads files")
 async def create_vacancy(vacancy: vacancy_schema.VacancyCreate = Depends(),
                          files: Optional[List[UploadFile]] = File(None),
                          db: Session = Depends(get_db)):
