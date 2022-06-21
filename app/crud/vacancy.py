@@ -13,8 +13,9 @@ class SortValues(str, Enum):
     expensive = "expensive"
 
 
-def create_vacancy(db: Session,  vacancy: vacancy_schema.VacancyCreate):
-    db_vacancy = Vacancy(title=vacancy.title,
+def create_vacancy(db: Session,  vacancy: vacancy_schema.VacancyCreate, user_id: int):
+    db_vacancy = Vacancy(userId=user_id,
+                         title=vacancy.title,
                          description=vacancy.description,
                          budget=vacancy.budget,
                          name=vacancy.name,

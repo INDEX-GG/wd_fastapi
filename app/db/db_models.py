@@ -31,6 +31,7 @@ class User(Base):
 
     photo = relationship("Photo", back_populates="owner")
     role = relationship("Role", back_populates="owner")
+    vacancies = relationship("Vacancy", back_populates="user")
 
 
 class Photo(Base):
@@ -86,6 +87,7 @@ class Errors(Base):
 class Vacancy(Base):
     __tablename__ = "vacancies"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    userId = Column("user_id", Integer, ForeignKey("users.id"), nullable=False)
     title = Column("title", String(150), nullable=False)
     description = Column("description", String(3000))
     budget = Column("budget", Integer, default=None)
@@ -95,10 +97,12 @@ class Vacancy(Base):
     createdAt = Column("created_at", TIMESTAMP)
 
     links = relationship("File")
+    user = relationship("User", back_populates="vacancies")
 
 
 class File(Base):
     __tablename__ = "files"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    filename = Column("filename", String)
     link = Column("link", String)
     vacancyId = Column("vacancy_id", Integer, ForeignKey("vacancies.id"))
