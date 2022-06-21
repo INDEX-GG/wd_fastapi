@@ -36,9 +36,8 @@ async def save_files(db: Session, vacancy_id: int, files: Optional[List[UploadFi
 
 
 def get_files(db: Session, vacancy_id: int):
-    query = db.query(DbFile)
-    query = query.filter(DbFile.vacancyId == vacancy_id)
-    return query.all()
+    db_files = db.query(DbFile).filter(DbFile.vacancyId == vacancy_id).all()
+    return db_files
 
 
 def get_file(db: Session, file_id: int):

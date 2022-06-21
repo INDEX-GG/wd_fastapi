@@ -1,5 +1,19 @@
 from pydantic import BaseModel
 import datetime
+from typing import List
+
+
+class VacancyUser(BaseModel):
+    id: int
+    name: str | None = None
+    surname: str | None = None
+    photo: str | None = None
+
+
+class VacancyFile(BaseModel):
+    id: int
+    filename: str | None = None
+    file_url: str | None = None
 
 
 class VacancyBase(BaseModel):
@@ -13,9 +27,9 @@ class VacancyBase(BaseModel):
     date: datetime.datetime | None = None
 
 
-class VacancyOut(BaseModel):
-    vacancies_id: int
-    vacancies_title: str
+class VacancyOut(VacancyBase):
+    user: VacancyUser
+    files: List[VacancyFile] | List = []
 
     class Config:
         orm_mode = True

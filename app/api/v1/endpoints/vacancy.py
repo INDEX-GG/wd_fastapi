@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, HTTPException, Depends, File
+from fastapi import APIRouter, UploadFile, Depends, File, HTTPException
 from typing import List, Optional
 from app.api.dependencies import get_db
 from app.crud import vacancy as vacancy_crud, file as file_crud, user as user_crud
@@ -10,15 +10,20 @@ router = APIRouter(prefix="/vacancies",
                    tags=["Vacancies"])
 
 
-@router.get("/{vacancy_id}")
+@router.get("/{vacancy_id}", summary="Get Vacancy By Id",
+            # response_model=vacancy_schema.VacancyOut,
+            status_code=200,
+            responses={404: response_schema.custom_errors("Bad Request", ["vacancy not found"])})
 async def get_vacancy_by_id(vacancy_id: int, db: Session = Depends(get_db)):
     db_vacancy = vacancy_crud.get_vacancy_by_id(db, vacancy_id)
-    file_list = file_crud.get_files(db, vacancy_id)
-    return {"vacancy": db_vacancy,
-            "links": file_list}
+    if not db_vacancy:
+        raise HTTPException(status_code=404, detail="vacancy not found")
+    vacancy_files = file_crud.get_files(db, vacancy_id)
+    vacancy_crud.get_vacancy_out(vacancy=db_vacancy, files=vacancy_files)
+    return "qwewqe"
 
 
-@router.post("", summary=" create vacancy  & Uploads files", response_model=response_schema.ResponseSuccess,
+@router.post("", summary="Create Vacancy", response_model=response_schema.ResponseSuccess,
              status_code=201,
              responses={400: response_schema.custom_errors("Bad Request", ["a lot of files"])})
 async def create_vacancy(vacancy: vacancy_schema.VacancyCreate = Depends(),

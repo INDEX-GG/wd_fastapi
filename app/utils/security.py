@@ -88,8 +88,7 @@ def decode_access_token(access_token: str = Depends(dependencies.oauth2_scheme))
 def decode_email_token(password_reset_token: str):
     try:
         payload = jwt.decode(password_reset_token, settings.EMAIL_TOKEN_SECRET_KEY, algorithms=[settings.ALGORITHM])
-    except Exception as e:
-        print(e)
+    except Exception:
         return False
     return payload
 
@@ -124,6 +123,5 @@ def decode_apple_token(token: str):
         payload = jwt.get_unverified_claims(token)
         token_info = token_schema.AppleTokenData(**payload)
         return token_info
-    except Exception as e:
-        print(e)
+    except Exception:
         return False

@@ -31,7 +31,6 @@ def recover_password(email: str = Body(embed=True),
         )
     token_data = {"sub": "email_password_recovery", "email": str(email)}
     password_reset_token = security.create_email_token(data=token_data)
-    print(password_reset_token)
     if not email_sending.send_reset_password_email(email_to=email, token=password_reset_token):
         raise HTTPException(
             status_code=400,
