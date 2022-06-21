@@ -104,5 +104,5 @@ class File(Base):
     __tablename__ = "files"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
     filename = Column("filename", String)
-    link = Column("link", String)
+    patch = Column("patch", String)
     vacancyId = Column("vacancy_id", Integer, ForeignKey("vacancies.id"))

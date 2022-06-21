@@ -13,7 +13,6 @@ class VacancyUser(BaseModel):
 class VacancyFile(BaseModel):
     id: int
     filename: str | None = None
-    file_url: str | None = None
 
 
 class VacancyBase(BaseModel):

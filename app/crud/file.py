@@ -7,8 +7,8 @@ import uuid
 from app.db.db_models import File as DbFile
 
 
-def create_file_to_db(db: Session, path: str, vacancy_id: int, filename: str):
-    db_file = DbFile(link=path,
+def create_file_to_db(db: Session, patch: str, vacancy_id: int, filename: str):
+    db_file = DbFile(patch=patch,
                      filename=filename,
                      vacancyId=vacancy_id)
     db.add(db_file)
@@ -29,7 +29,7 @@ async def save_files(db: Session, vacancy_id: int, files: Optional[List[UploadFi
                 async with aiofiles.open("{}{}".format(file_patch, file.filename), mode="wb+") as f:
                     content = await file.read()
                     await f.write(content)
-                    create_file_to_db(db=db, path="{}{}".format(file_patch, file.filename),
+                    create_file_to_db(db=db, patch="{}{}".format(file_patch, file.filename),
                                       vacancy_id=vacancy_id, filename=file.filename)
             except Exception:
                 pass
@@ -41,4 +41,7 @@ def get_files(db: Session, vacancy_id: int):
 
 
 def get_file(db: Session, file_id: int):
-    return db.query(DbFile).get(file_id)
+    db_file: DbFile = db.query(DbFile).filter(DbFile.id == file_id).first()
+    if not db_file:
+        return False
+    return db_file

@@ -37,11 +37,9 @@ def get_vacancy_by_id(db: Session, vacancy_id: int):
 
 
 def get_vacancy_out(vacancy: Vacancy, files: List[File]):
-    print("!!@!@!@")
-    #
-    # vacancy_dict = vacancy.__dict__
-    # # print(vacancy.user)
-    # vacancy_dict["user"] = vacancy.user.__dict__
-    # vacancy_out = vacancy_schema.VacancyOut(vacancy_dict)
-    # print(vacancy_out)
-
+    vacancy_dict = vacancy.__dict__
+    vacancy_dict["user"] = vacancy.user.__dict__
+    files_dicts = [i.__dict__ for i in files]
+    vacancy_dict["files"] = files_dicts
+    vacancy_out = vacancy_schema.VacancyOut(**vacancy_dict)
+    return vacancy_out
