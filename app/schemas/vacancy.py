@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 import datetime
 from typing import List
 
@@ -35,12 +35,12 @@ class VacancyOut(VacancyBase):
 
 
 class VacancyCreate(BaseModel):
-    title: str
-    description: str | None = None
+    title: constr(max_length=150)
+    description: constr(max_length=3000) | None = None
     budget: int | None = None
     name: str | None = None
     email: str | None = None
-    phone: int | None = None
+    phone: str | None = None
 
     class Config:
         orm_mode = True

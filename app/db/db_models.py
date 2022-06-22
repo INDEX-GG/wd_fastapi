@@ -89,12 +89,12 @@ class Vacancy(Base):
     __tablename__ = "vacancies"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
     userId = Column("user_id", Integer, ForeignKey("users.id"), nullable=False)
-    title = Column("title", String(150), nullable=False)
-    description = Column("description", String(3000))
+    title = Column("title", String(300), nullable=False)
+    description = Column("description", String(6000))
     budget = Column("budget", Integer, default=None)
     name = Column("name", String)
     email = Column("email", String)
-    phone = Column("phone", Integer)
+    phone = Column("phone", String)
     createdAt = Column("created_at", TIMESTAMP)
 
     links = relationship("File")
