@@ -1,26 +1,29 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import delete
-from app.schemas import favorites
-from app.db.db_models import Favorites as DbFavorites
+from app.schemas import favorites as favorite_schema
+from app.db.db_models import Favorites
 
 
-def create_favorites(db: Session , favorite: favorites.Favorite ):
-    db_favorite = DbFavorites(userId=favorite.userId,
-                            objId=favorite.objId)
+def create_favorites(db: Session , favorite :favorite_schema.CreateFavorite ):
+    check = db.query(Favorites).where(Favorites.userId == favorite.userId, Favorites.objId== favorite.objId).all()
+    if check:
+        return False
+
+
+    db_favorite = Favorites (userId=favorite.userId,
+                                 objId=favorite.objId)
     db.add(db_favorite)
     db.commit()
     db.refresh(db_favorite)
     return db_favorite
 
-def read_favorites(db: Session, user_id : int):
-    db_favorites = db.query(DbFavorites).filter(DbFavorites.userId == user_id).all()
-    return db_favorites
+def read_favorites(user_id : int,db: Session):
+    return db.query(Favorites).where(Favorites.userId == user_id).all()
 
 
-def delete_favorites(db: Session, favorite: favorites.Favorite ):
-    stmt = (
-        delete(DbFavorites).
-        where(DbFavorites.userId == favorite.userId,  DbFavorites.objId == favorite.objId )
-    )
-    return stmt;
+
+def delete_favorites(db: Session, userId : int , objId : int ):
+    delete =  db.query(Favorites).where(Favorites.userId == userId, Favorites.objId == objId).delete(synchronize_session="evaluate")
+    db.commit()
+    return delete
+
 

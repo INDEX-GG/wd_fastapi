@@ -33,7 +33,7 @@ class User(Base):
     photo = relationship("Photo", back_populates="owner")
     role = relationship("Role", back_populates="owner")
     vacancies = relationship("Vacancy", back_populates="user")
-    post = relationship("Post")
+    posts = relationship("Favorites")
 
 
 class Photo(Base):
@@ -109,8 +109,9 @@ class File(Base):
     patch = Column("patch", String)
     vacancyId = Column("vacancy_id", Integer, ForeignKey("vacancies.id"))
 
-##follow много ко многим user_id ,  {id , userid, id_follow_ post}
+
 class Favorites(Base):
-    __tablename__ = "favorites",
-    userId =Column("user_id", ForeignKey("users.id")),
-    objId = Column("obj_id", ForeignKey("posts.id"))
+    __tablename__ = "favorites"
+    id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    userId =Column("user_id", Integer, ForeignKey("users.id"))
+    objId = Column("obj_id",Integer, ForeignKey("posts.id"))
