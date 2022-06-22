@@ -25,7 +25,6 @@ async def get_favorites( current_user: user_schema.UserOut = Depends(user_crud.g
                                                    db)
     return list_favorites
 
-#current_user: user_schema.UserOut = Depends(user_crud.get_current_user)
 @router.post("",summary="Create Favorite")
 async def create_favorite(obj : PostSchema.PostOut,
                           current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
