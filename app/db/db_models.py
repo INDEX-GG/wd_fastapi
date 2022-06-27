@@ -120,8 +120,8 @@ class Favorites(Base):
 class Shoutout(Base):
     __tablename__ = "shoutout"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
-    rating = Column("rating", Integer)
+    #rating = Column("rating", Integer)
     text = Column("text", String(600), default=None)
 
     id_reviewer = Column("id_reviewer", Integer, ForeignKey("users.id"))
-    in_regard_to = Column("in_regard_to", Integer, ForeignKey("users.id"))
+    #in_regard_to = Column("in_regard_to", Integer, ForeignKey("users.id"))

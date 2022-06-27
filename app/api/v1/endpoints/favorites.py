@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends, Body
+from fastapi import APIRouter,Depends
 from app.crud import user as user_crud, favorites as favorites_crud
 from app.schemas import favorites as favarites_schema, user as user_schema, post as PostSchema
 from app.api.dependencies import get_db
@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/favorites",
                    tags=["favorites"])
 
-#рассмотреть если избранное пустое, вернуть пустой массив, иначе вернуть массив избранного
 
 @router.delete("")
 async def delete_favorite(obj : PostSchema.PostOut,

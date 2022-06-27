@@ -8,17 +8,14 @@ class ShoutoutBase(BaseModel):
     text: str | None
 
     id_reviewer : int
-    in_regard_to : int
 
-class DeleteShoutout(BaseModel):
-    in_regard_to: int
+
 
 class UpdateShoutout(BaseModel):
     rating: int | None
     text: str | None
 
     id_reviewer: int
-    in_regard_to: int
 
 class CreateShoutout(BaseModel):
     rating: int
