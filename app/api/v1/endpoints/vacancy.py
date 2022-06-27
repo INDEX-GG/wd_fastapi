@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, Depends, File, HTTPException
+from fastapi import APIRouter, UploadFile, Depends, File, HTTPException,Body
 from typing import List, Optional
 from app.api.dependencies import get_db
 from app.crud import vacancy as vacancy_crud, file as file_crud, user as user_crud, post as post_crud
