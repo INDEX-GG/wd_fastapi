@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, 
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
+from datetime import datetime
 from sqlalchemy.schema import Table
 
 
@@ -34,6 +35,7 @@ class User(Base):
     role = relationship("Role", back_populates="owner")
     vacancies = relationship("Vacancy", back_populates="user")
     posts = relationship("Favorites")
+    historySearch = relationship("HistorySearch")
 
 
 class Photo(Base):
@@ -120,8 +122,19 @@ class Favorites(Base):
 class Shoutout(Base):
     __tablename__ = "shoutout"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
-    #rating = Column("rating", Integer)
+    rating = Column("rating", Integer)
     text = Column("text", String(600), default=None)
 
     id_reviewer = Column("id_reviewer", Integer, ForeignKey("users.id"))
-    #in_regard_to = Column("in_regard_to", Integer, ForeignKey("users.id"))
+    in_regard_to = Column("in_regard_to", Integer, ForeignKey("users.id"))
+
+
+class HistorySearch(Base):
+    __tablename__ = "historySearch"
+    id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    userId = Column("user_id", Integer, ForeignKey("users.id"))
+    searchQuery = Column("search_querry" , String)
+    flagPrice = Column("flag_price", BOOLEAN, default=False)
+    price = Column("price", Integer,default=0)
+    date = Column("date", TIMESTAMP, default=datetime.now())
+
