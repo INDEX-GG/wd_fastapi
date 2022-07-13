@@ -23,12 +23,12 @@ async def delete_favorite(obj: post_schema.PostOut,
             response_model=List[post_schema.Post]
             )
 async def get_favorites(
-        # current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
+        current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
         page: int = Query(default=1, ge=1, le=1000),
         page_limit: int = Query(alias="pageLimit", default=60, ge=1, le=200),
         db: Session = Depends(get_db)):
 
-    list_favorites = favorites_crud.read_favorites(db=db, user_id=15, page_limit=page_limit, page=page) #user_id=current_user.id)
+    list_favorites = favorites_crud.read_favorites(db=db, user_id=current_user.id, page_limit=page_limit, page=page)
     return list_favorites
 
 
