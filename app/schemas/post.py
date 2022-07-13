@@ -39,6 +39,7 @@ class Posts(BaseModel):
     class Config:
         orm_mode = True
 
+
 class PostOut(BaseModel):
     id: int
 
