@@ -20,7 +20,7 @@ async def delete_favorite(obj: post_schema.PostOut,
 
 
 @router.get("", summary="Get favorites posts page by page", tags=[],
-            response_model=List[post_schema.Post]
+            response_model=List[post_schema.FavoritePost]
             )
 async def get_favorites(
         current_user: user_schema.UserOut = Depends(user_crud.get_current_user),

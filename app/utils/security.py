@@ -85,6 +85,22 @@ def decode_access_token(access_token: str = Depends(dependencies.oauth2_scheme))
     return token_data
 
 
+def decode_access_token_optional(access_token: str = Depends(dependencies.oauth2_scheme_optional)):
+    try:
+        payload = jwt.decode(access_token, settings.ACCESS_TOKEN_SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id = payload.get("user_id")
+        try:
+            user_id = int(user_id)
+        except Exception:
+            return False
+        if user_id is None:
+            return False
+    except Exception:
+        return False
+    token_data = {"sub": "user", "user_id": str(payload.get("user_id"))}
+    return token_data
+
+
 def decode_email_token(password_reset_token: str):
     try:
         payload = jwt.decode(password_reset_token, settings.EMAIL_TOKEN_SECRET_KEY, algorithms=[settings.ALGORITHM])

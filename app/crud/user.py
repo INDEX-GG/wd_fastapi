@@ -18,6 +18,16 @@ def get_current_user(db: Session = Depends(get_db), access_token: str = Depends(
     return user
 
 
+def get_current_user_optional(db: Session = Depends(get_db),
+                              access_token: str = Depends(dependencies.oauth2_scheme_optional)):
+    token_data = security.decode_access_token_optional(access_token)
+    if token_data:
+        user_id = token_data["user_id"]
+        user = get_user(db=db, user_id=user_id)
+        return user
+    return None
+
+
 async def get_current_email_verify_user(current_user: user_schema.UserOut = Depends(get_current_user)):
     if not current_user.emailVerified:
         raise HTTPException(status_code=400, detail="not email verified")

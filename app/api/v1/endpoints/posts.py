@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query, Depends
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
-from app.crud import post as crud_post
-from app.schemas import post as post_schema
+from app.crud import post as crud_post, user as user_crud
+from app.schemas import post as post_schema, user as user_schema
 
 
 router = APIRouter(prefix="/posts",
@@ -18,6 +18,7 @@ async def get_posts_page_by_page(
         with_contract_price: bool = Query(alias="withContractPrice", default=None),
         search_string: str = Query(alias="searchString", default=None, min_length=1, max_length=200),
         sort: crud_post.SortValues = Query(default="default"),
+        current_user_optional: user_schema.UserOut | None = Depends(user_crud.get_current_user_optional),
         db: Session = Depends(get_db)
 ):
     items = crud_post.get_posts_page_by_page(db=db,
@@ -26,5 +27,7 @@ async def get_posts_page_by_page(
                                              price_from=price_from,
                                              with_contract_price=with_contract_price,
                                              search_string=search_string,
-                                             sort=sort)
+                                             sort=sort,
+                                             user=current_user_optional)
+
     return items

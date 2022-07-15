@@ -3,6 +3,7 @@ from app.db.session import SessionLocal
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
 
 def get_db():

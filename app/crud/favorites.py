@@ -16,7 +16,7 @@ def create_favorites(db: Session, favorite: favorite_schema.CreateFavorite):
 
 def read_favorites(user_id: int, db: Session, page: int = 1, page_limit: int = 60):
     offset = (page - 1) * page_limit
-    query = db.query(Post).where(Favorites.userId == user_id, Post.id == Favorites.objId)
+    query = db.query(Post).where(Favorites.userId == user_id, Post.id == Favorites.objId).order_by(Favorites.id.desc())
     posts = query.offset(offset).limit(page_limit).all()
     return posts
 

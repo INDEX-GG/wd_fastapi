@@ -23,6 +23,7 @@ class PostsBase(BaseModel):
     date: datetime.datetime | None = None
     source: str | None = None
     parseDate: str | None = None
+    inFavorite: bool = False
 
 
 class Post(PostsBase):
@@ -42,6 +43,14 @@ class Posts(BaseModel):
 
 class PostOut(BaseModel):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class FavoritePost(PostsBase):
+    id: int
+    inFavorite: bool = True
 
     class Config:
         orm_mode = True

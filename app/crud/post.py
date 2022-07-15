@@ -1,10 +1,10 @@
 import datetime
 
-from sqlalchemy import or_, nullslast
+from sqlalchemy import or_, nullslast, and_
 from sqlalchemy.orm import Session
 from enum import Enum
-from app.db.db_models import Post, Vacancy
-from app.schemas import post as post_schema
+from app.db.db_models import Post, Vacancy, Favorites
+from app.schemas import post as post_schema, user as user_schema
 
 
 class SortValues(str, Enum):
@@ -15,6 +15,7 @@ class SortValues(str, Enum):
 
 
 def get_posts_page_by_page(db: Session,
+                           user: user_schema.UserOut,
                            page: int = 1,
                            page_limit: int = 60,
                            price_from: int = None,
@@ -22,8 +23,15 @@ def get_posts_page_by_page(db: Session,
                            search_string: str = None,
                            sort: SortValues = "default"):
     offset = (page - 1) * page_limit
-    query = db.query(Post)
+
+    if user:
+        query = db.query(Post, Favorites.id)
+        query = query.outerjoin(Favorites, and_(Favorites.objId == Post.id, Favorites.userId == user.id))
+    else:
+        query = db.query(Post)
+
     posts_count = None
+
     if price_from:
         if with_contract_price:
             query = query.filter(or_(Post.priceAmount >= price_from, Post.priceAmount == None))
@@ -44,6 +52,16 @@ def get_posts_page_by_page(db: Session,
     if page == 1:
         posts_count = query.count()
     posts = query.offset(offset).limit(page_limit).all()
+
+    if user:
+        answer = []
+        for post in posts:
+            like = bool(post[1])
+            post = post[0]
+            post.inFavorite = like
+            answer.append(post)
+        return post_schema.Posts(posts=answer, posts_count=posts_count)
+
     return post_schema.Posts(posts=posts, postsCount=posts_count)
 
 
