@@ -3,7 +3,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from datetime import datetime
-from sqlalchemy.schema import Table
 
 
 class User(Base):
@@ -57,6 +56,7 @@ class Role(Base):
 class Post(Base):
     __tablename__ = "posts"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    random = Column("random", Integer)
     title = Column("title", String)
     description = Column("description", String)
     priceAmount = Column("price_amount", Integer)
@@ -116,8 +116,8 @@ class File(Base):
 class Favorites(Base):
     __tablename__ = "favorites"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
-    userId =Column("user_id", Integer, ForeignKey("users.id"))
-    objId = Column("obj_id",Integer, ForeignKey("posts.id"))
+    userId = Column("user_id", Integer, ForeignKey("users.id"))
+    objId = Column("obj_id", Integer, ForeignKey("posts.id"))
 
 
 class Shoutout(Base):
@@ -134,8 +134,7 @@ class HistorySearch(Base):
     __tablename__ = "historySearch"
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
     userId = Column("user_id", Integer, ForeignKey("users.id"))
-    searchQuery = Column("search_querry" , String)
+    searchQuery = Column("search_query", String)
     flagPrice = Column("flag_price", BOOLEAN, default=False)
-    price = Column("price", Integer,default=0)
+    price = Column("price", Integer, default=0)
     date = Column("date", TIMESTAMP, default=datetime.now())
-

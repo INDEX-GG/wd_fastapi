@@ -1,6 +1,5 @@
 import datetime
-
-from sqlalchemy import or_, nullslast, and_
+from sqlalchemy import or_, nullslast, and_, func
 from sqlalchemy.orm import Session
 from enum import Enum
 from app.db.db_models import Post, Vacancy, Favorites
@@ -41,7 +40,7 @@ def get_posts_page_by_page(db: Session,
         query = query.filter(Post.title.ilike("%" + search_string + "%"))
     match sort:
         case SortValues.default.name:
-            query = query.order_by(nullslast(Post.priority.desc()), Post.date.desc())
+            query = query.order_by(Post.date.desc(), nullslast(Post.priority.desc()), Post.random)
         case SortValues.new.name:
             query = query.order_by(Post.date.desc())
         case SortValues.cheaper.name:
