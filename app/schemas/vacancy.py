@@ -23,7 +23,7 @@ class VacancyBase(BaseModel):
     name: str | None = None
     email: str | None = None
     phone: int | None = None
-    date: datetime.datetime | None = None
+    createdAt: datetime.datetime | None = None
 
 
 class VacancyOut(VacancyBase):

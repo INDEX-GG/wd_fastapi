@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import or_, nullslast, and_, func
+from sqlalchemy import or_, nullslast, and_
 from sqlalchemy.orm import Session
 from enum import Enum
 from app.db.db_models import Post, Vacancy, Favorites
