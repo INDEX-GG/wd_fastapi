@@ -1,38 +1,42 @@
-from fastapi import APIRouter,Depends, Body
+from fastapi import APIRouter, Depends, Query
+from typing import List
 from app.api.dependencies import get_db
 from sqlalchemy.orm import Session
-from app.schemas import user as user_schema, shoutout as shoutout_schema
+from app.schemas import user as user_schema, shoutout as shoutout_schema, response as response_schema
 from app.crud import user as user_crud, shoutout as shoutout_crud
 
-router = APIRouter(prefix="/shoutouts",
-                   tags=["shoutout"])
 
-@router.delete("",summary="delete shoutout") #works correctly
-async def delete_shoutout( in_regard_to: shoutout_schema.DeleteShoutout ,
+router = APIRouter(prefix="/shoutouts", tags=["shoutout"])
+
+
+@router.post("", summary="create shoutout",
+             response_model=response_schema.ResponseSuccess, status_code=201)
+async def create_shoutout(shoutout: shoutout_schema.CreateShoutout,
                           current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
                           db: Session = Depends(get_db)):
-
-    return shoutout_crud.delete_shoutout(db,in_regard_to , current_user.id )
-
-@router.post("", summary="create shoutout") #works correctly
-async def create(  create : shoutout_schema.CreateShoutout,
-                    current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
-                    db: Session = Depends(get_db)):
-    new_shoutout = shoutout_crud.create_shoutout(db,create,current_user.id)
-    return new_shoutout
-
-@router.get("/me" , summary="get shoutouts me") #works correctly
-async def read_shoutouts_me(current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
-                            db: Session = Depends(get_db)):
-    list_shoutouts_me = shoutout_crud.read_shoutouts_me(db,current_user.id)
-    return list_shoutouts_me
-
-@router.get("/{user_id}", summary="get shoutouts his")  #works correctly
-async def read_shoutouts_his( user_id : int,
-                              db: Session = Depends(get_db)):
-    list_shoutouts_his = shoutout_crud.read_shoutouts_his(db, user_id)
-    return list_shoutouts_his
+    shoutout_crud.create_shoutout(db=db, shoutout=shoutout, user_id=current_user.id)
+    return {"msg": "success"}
 
 
+@router.get("/my", summary="Get user shoutouts page by page",
+            response_model=List[shoutout_schema.Shoutout])
+async def get_user_shoutouts(current_user: user_schema.UserOut = Depends(user_crud.get_current_user),
+                             page: int = Query(default=1, ge=1, le=1000),
+                             page_limit: int = Query(alias="pageLimit", default=60, ge=1, le=200),
+                             db: Session = Depends(get_db)):
+    list_user_shoutouts = shoutout_crud.read_user_shoutouts(db=db,
+                                                            user_id=current_user.id,
+                                                            page_limit=page_limit,
+                                                            page=page)
+    return list_user_shoutouts
 
 
+@router.get("", summary="Get all shoutouts page by page",
+            response_model=List[shoutout_schema.Shoutout])
+async def get_user_shoutouts(page: int = Query(default=1, ge=1, le=1000),
+                             page_limit: int = Query(alias="pageLimit", default=60, ge=1, le=200),
+                             db: Session = Depends(get_db)):
+    list_all_shoutouts = shoutout_crud.read_all_shoutouts(db=db,
+                                                          page_limit=page_limit,
+                                                          page=page)
+    return list_all_shoutouts

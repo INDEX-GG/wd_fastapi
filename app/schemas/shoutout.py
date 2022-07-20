@@ -1,33 +1,16 @@
-from pydantic import BaseModel
-from typing import List
+import datetime
+
+from pydantic import BaseModel, Field
 
 
-class ShoutoutBase(BaseModel):
-    id : int
-    rating: int | None
-    text: str | None
+class Shoutout(BaseModel):
+    id: int
+    userId: int
+    text: str
+    rating: int = Field(..., ge=0, le=5)
+    createdAt: datetime.datetime
 
-    id_reviewer : int
-    in_regard_to : int
-
-class DeleteShoutout(BaseModel):
-    in_regard_to: int
-
-class UpdateShoutout(BaseModel):
-    rating: int | None
-    text: str | None
-
-    id_reviewer: int
-    in_regard_to: int
 
 class CreateShoutout(BaseModel):
-    rating: int
-    text: str | None
-    in_regard_to : int
-
-class Shoutouts(BaseModel):
-    arrSchoutouts : List [ShoutoutBase]
-    class Config:
-        orm_mode = True
-
-
+    text: str
+    rating: int = Field(..., ge=0, le=5)
