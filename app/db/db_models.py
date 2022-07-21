@@ -110,6 +110,7 @@ class File(Base):
     id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
     filename = Column("filename", String)
     patch = Column("patch", String)
+    vacancyId = Column("vacancy_id", Integer, ForeignKey("vacancies.id"))
 
 
 class Favorites(Base):
