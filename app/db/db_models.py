@@ -102,7 +102,6 @@ class Vacancy(Base):
     phone = Column("phone", String)
     createdAt = Column("created_at", TIMESTAMP)
 
-    links = relationship("File")
     user = relationship("User", back_populates="vacancies")
 
 
