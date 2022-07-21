@@ -33,6 +33,7 @@ class User(Base):
     photo = relationship("Photo", back_populates="owner")
     role = relationship("Role", back_populates="owner")
     vacancies = relationship("Vacancy", back_populates="user")
+    shoutouts = relationship("Shoutout", back_populates="user")
     posts = relationship("Favorites")
     historySearch = relationship("HistorySearch")
 
@@ -127,6 +128,8 @@ class Shoutout(Base):
     text = Column("text", String, nullable=False)
     rating = Column("rating", Integer, nullable=False)
     createdAt = Column("created_at", TIMESTAMP)
+
+    user = relationship("User", back_populates="shoutouts")
 
 
 class HistorySearch(Base):

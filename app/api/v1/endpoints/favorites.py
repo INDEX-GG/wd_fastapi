@@ -3,7 +3,6 @@ from typing import List
 from app.crud import user as user_crud, favorites as favorites_crud
 from app.schemas import favorites as favorites_schema, user as user_schema, post as post_schema
 from app.api.dependencies import get_db
-
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/favorites",
