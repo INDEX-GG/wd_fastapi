@@ -75,6 +75,7 @@ def create_post(db: Session,  vacancy: Vacancy):
                    priceCurrency=currency,
                    date=datetime.datetime.utcnow(),
                    source="https://workdirect.ru/",
-                   priority=5)
+                   priority=5,
+                   vacancyId=vacancy.id)
     db.add(db_post)
     db.commit()

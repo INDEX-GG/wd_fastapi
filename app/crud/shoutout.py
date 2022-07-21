@@ -40,7 +40,6 @@ def get_shoutout_out(db_shoutout: Shoutout):
     shoutout_dict = db_shoutout.__dict__
     shoutout_dict["user"] = db_shoutout.user.__dict__
     shoutout_out = shoutout_schema.ShoutoutOut(**shoutout_dict)
-    print(shoutout_out)
     return shoutout_out
 
 
