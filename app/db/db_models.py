@@ -132,10 +132,10 @@ class Shoutout(Base):
 
 
 class HistorySearch(Base):
-    __tablename__ = "historySearch"
+    __tablename__ = "history_search"
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, nullable=False)
     userId = Column("user_id", BigInteger, ForeignKey("users.id"))
     searchQuery = Column("search_query", String)
-    flagPrice = Column("flag_price", BOOLEAN, default=False)
-    price = Column("price", BigInteger, default=0)
-    date = Column("date", TIMESTAMP, default=datetime.now())
+    withContractPrice = Column("with_contract_price", BOOLEAN)
+    price = Column("price", BigInteger)
+    createdAt = Column("created_at", TIMESTAMP, nullable=False)
