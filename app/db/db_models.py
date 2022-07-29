@@ -2,7 +2,6 @@ from sqlalchemy import Column, BigInteger, String, TIMESTAMP, BOOLEAN, ForeignKe
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
-from datetime import datetime
 
 
 class User(Base):

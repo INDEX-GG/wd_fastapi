@@ -19,6 +19,16 @@ async def registration(user: user_schema.UserCreate,
     return {"message": "success"}
 
 
-@router.get("/me", response_model=user_schema.UserOut, tags=[], summary="")
+@router.get("/me", response_model=user_schema.UserOut, tags=[], summary="Get User Me")
 async def read_users_me(current_user: user_schema.UserOut = Depends(crud_user.get_current_user)):
     return current_user
+
+
+@router.put("/me",
+            response_model=response_schema.ResponseSuccess,
+            tags=[], summary="Change User Me")
+async def read_users_me(new_user_data: user_schema.ChangeUser,
+                        db: Session = Depends(get_db),
+                        current_db_user=Depends(crud_user.get_current_db_user)):
+    crud_user.change_user_data(user=current_db_user, user_data=new_user_data, db=db)
+    return {"message": "success"}

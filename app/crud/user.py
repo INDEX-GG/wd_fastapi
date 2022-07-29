@@ -18,6 +18,15 @@ def get_current_user(db: Session = Depends(get_db), access_token: str = Depends(
     return user
 
 
+def get_current_db_user(db: Session = Depends(get_db), access_token: str = Depends(dependencies.oauth2_scheme)):
+    token_data = security.decode_access_token(access_token)
+    user_id = token_data["user_id"]
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user is None:
+        raise security.credentials_exception
+    return db_user
+
+
 def get_current_user_optional(db: Session = Depends(get_db),
                               access_token: str = Depends(dependencies.oauth2_scheme_optional)):
     token_data = security.decode_access_token_optional(access_token)
@@ -156,4 +165,12 @@ def create_user_oauth(db: Session, user: user_schema.UserCreateOauth):
 
 def change_user_password(db: Session, user: User, new_password: str):
     user.password = new_password
+    db.commit()
+
+
+def change_user_data(db: Session, user: User, user_data: user_schema.ChangeUser):
+    if user_data.email:
+        user.email = user_data.email
+    if user_data.phone:
+        user.phone = user_data.phone
     db.commit()

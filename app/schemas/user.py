@@ -71,3 +71,11 @@ class UserOut(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class ChangeUser(BaseModel):
+    email: str | None = None
+    phone: int | None = None
+
+    class Config:
+        orm_mode = True
