@@ -44,5 +44,4 @@ async def get_user_posts_page_by_page(
                                                   page=page,
                                                   page_limit=page_limit,
                                                   user=current_user)
-
     return items

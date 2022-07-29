@@ -59,7 +59,7 @@ def get_posts_page_by_page(db: Session,
             post = post[0]
             post.inFavorite = like
             answer.append(post)
-        return post_schema.Posts(posts=answer, posts_count=posts_count)
+        return post_schema.Posts(posts=answer, postsCount=posts_count)
 
     return post_schema.Posts(posts=posts, postsCount=posts_count)
 
@@ -70,26 +70,21 @@ def get_user_posts_page_by_page(db: Session,
                                 page_limit: int = 60):
     offset = (page - 1) * page_limit
 
-    query = db.query(Post, Favorites.id).where(Post == Vacancy.id, Vacancy.userId == user.id)
+    query = db.query(Post, Favorites.id).where(Post.vacancyId == Vacancy.id, Vacancy.userId == user.id)
     query = query.outerjoin(Favorites, and_(Favorites.objId == Post.id, Favorites.userId == user.id))
     query = query.order_by(Post.id.desc())
     posts_count = None
-
     if page == 1:
         posts_count = query.count()
-
     posts = query.offset(offset).limit(page_limit).all()
 
-    if user:
-        answer = []
-        for post in posts:
-            like = bool(post[1])
-            post = post[0]
-            post.inFavorite = like
-            answer.append(post)
-        return post_schema.Posts(posts=answer, posts_count=posts_count)
-
-    return post_schema.Posts(posts=posts, postsCount=posts_count)
+    answer = []
+    for post in posts:
+        like = bool(post[1])
+        post = post[0]
+        post.inFavorite = like
+        answer.append(post)
+    return post_schema.Posts(posts=answer, postsCount=posts_count)
 
 
 def create_post(db: Session,  vacancy: Vacancy):
