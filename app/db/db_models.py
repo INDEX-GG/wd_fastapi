@@ -66,6 +66,7 @@ class Post(Base):
     source = Column("source", String)
     parseDate = Column("parse_date", TIMESTAMP)
     priority = Column("priority", BigInteger)
+    vacancyId = Column("vacancy_id", BigInteger, ForeignKey("vacancies.id"), nullable=True)
 
 
 class Jobs(Base):

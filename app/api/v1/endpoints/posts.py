@@ -31,3 +31,18 @@ async def get_posts_page_by_page(
                                              user=current_user_optional)
 
     return items
+
+
+@router.get("/my", response_model=post_schema.Posts, tags=[], summary="Get user posts page by page", description="")
+async def get_user_posts_page_by_page(
+        page: int = Query(default=1, ge=1, le=1000),
+        page_limit: int = Query(alias="pageLimit", default=60, ge=1, le=200),
+        db: Session = Depends(get_db),
+        current_user: user_schema.UserOut = Depends(user_crud.get_current_user)
+):
+    items = crud_post.get_user_posts_page_by_page(db=db,
+                                                  page=page,
+                                                  page_limit=page_limit,
+                                                  user=current_user)
+
+    return items

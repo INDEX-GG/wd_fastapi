@@ -64,6 +64,34 @@ def get_posts_page_by_page(db: Session,
     return post_schema.Posts(posts=posts, postsCount=posts_count)
 
 
+def get_user_posts_page_by_page(db: Session,
+                                user: user_schema.UserOut,
+                                page: int = 1,
+                                page_limit: int = 60):
+    offset = (page - 1) * page_limit
+
+    query = db.query(Post, Favorites.id).where(Post == Vacancy.id, Vacancy.userId == user.id)
+    query = query.outerjoin(Favorites, and_(Favorites.objId == Post.id, Favorites.userId == user.id))
+    query = query.order_by(Post.id.desc())
+    posts_count = None
+
+    if page == 1:
+        posts_count = query.count()
+
+    posts = query.offset(offset).limit(page_limit).all()
+
+    if user:
+        answer = []
+        for post in posts:
+            like = bool(post[1])
+            post = post[0]
+            post.inFavorite = like
+            answer.append(post)
+        return post_schema.Posts(posts=answer, posts_count=posts_count)
+
+    return post_schema.Posts(posts=posts, postsCount=posts_count)
+
+
 def create_post(db: Session,  vacancy: Vacancy):
     currency = None
     if vacancy.budget:
@@ -75,6 +103,7 @@ def create_post(db: Session,  vacancy: Vacancy):
                    priceCurrency=currency,
                    date=datetime.datetime.utcnow(),
                    source="https://workdirect.ru/",
-                   priority=5)
+                   priority=5,
+                   vacancyId=vacancy.id)
     db.add(db_post)
     db.commit()
