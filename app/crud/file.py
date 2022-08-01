@@ -45,3 +45,7 @@ def get_file(db: Session, file_id: int):
     if not db_file:
         return False
     return db_file
+
+
+def delete_files(db: Session, vacancy_id: int):
+    db.query(DbFile).filter(DbFile.vacancyId == vacancy_id).delete()

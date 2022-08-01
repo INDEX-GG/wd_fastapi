@@ -24,6 +24,7 @@ class PostsBase(BaseModel):
     source: str | None = None
     parseDate: str | None = None
     inFavorite: bool = False
+    vacancyId: int | None = None
 
 
 class Post(PostsBase):

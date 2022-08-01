@@ -102,3 +102,10 @@ def create_post(db: Session,  vacancy: Vacancy):
                    vacancyId=vacancy.id)
     db.add(db_post)
     db.commit()
+
+
+def delete_post(db: Session,  vacancy: Vacancy):
+    db_post: Post = db.query(Post).filter(Post.vacancyId == vacancy.id).first()
+    if db_post:
+        db.delete(db_post)
+        db.commit()

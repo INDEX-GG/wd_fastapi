@@ -29,12 +29,18 @@ def create_vacancy(db: Session,  vacancy: vacancy_schema.VacancyCreate, user_id:
     return db_vacancy
 
 
-def get_vacancy_by_id(db: Session, vacancy_id: int):
-    db_vacancy = db.query(Vacancy).filter(Vacancy.id == vacancy_id).first()
+def get_vacancy_by_id(db: Session, vacancy_id: int, user_id: int):
+    db_vacancy = db.query(Vacancy).filter(Vacancy.id == vacancy_id, Vacancy.userId == user_id).first()
     if db_vacancy:
         return db_vacancy
     else:
         return False
+
+
+def delete_vacancy_by_id(db: Session, vacancy: Vacancy):
+    if vacancy:
+        db.delete(vacancy)
+        db.commit()
 
 
 def get_vacancy_out(vacancy: Vacancy, files: List[File]):

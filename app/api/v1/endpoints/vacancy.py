@@ -34,3 +34,19 @@ async def create_vacancy(vacancy: vacancy_schema.VacancyCreate = Depends(),
     post_crud.create_post(db=db, vacancy=new_vacancy)
     await file_crud.save_files(db=db, files=files, vacancy_id=new_vacancy.id)
     return {"message": "success"}
+
+
+@router.delete("/{vacancy_id}", summary="Delete Vacancy By Id",
+               response_model=response_schema.ResponseSuccess,
+               status_code=200,
+               responses={404: response_schema.custom_errors("Bad Request", ["vacancy not found"])})
+async def delete_vacancy_by_id(vacancy_id: int,
+                               db: Session = Depends(get_db),
+                               current_user: user_schema.UserOut = Depends(user_crud.get_current_user)):
+    db_vacancy = vacancy_crud.get_vacancy_by_id(db, vacancy_id, current_user.id)
+    if not db_vacancy:
+        raise HTTPException(status_code=404, detail="vacancy not found")
+    post_crud.delete_post(db=db, vacancy=db_vacancy)
+    file_crud.delete_files(db=db, vacancy_id=db_vacancy.id)
+    vacancy_crud.delete_vacancy_by_id(db=db, vacancy=db_vacancy)
+    return {"message": "success"}
