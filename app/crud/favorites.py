@@ -42,7 +42,9 @@ def get_favorites_posts_page_by_page(db: Session,
                                      page_limit: int = 60):
     offset = (page - 1) * page_limit
     query = db.query(Post)
-
+    posts_count = None
+    if page == 1:
+        posts_count = query.count()
     posts = query.offset(offset).limit(page_limit).all()
 
-    return post_schema.Posts(posts=posts)
+    return post_schema.Posts(posts=posts, postsCount=posts_count)

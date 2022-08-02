@@ -23,8 +23,11 @@ def read_user_shoutouts(db: Session, user_id: int, page_limit: int, page: int):
         .options(joinedload(Shoutout.user)) \
         .where(Shoutout.userId == user_id)\
         .order_by(Shoutout.id.desc())
+    shoutouts_count = None
+    if page == 1:
+        shoutouts_count = query.count()
     shoutouts = query.offset(offset).limit(page_limit).all()
-    return shoutouts
+    return shoutouts, shoutouts_count
 
 
 def read_all_shoutouts(db: Session, page_limit: int, page: int):

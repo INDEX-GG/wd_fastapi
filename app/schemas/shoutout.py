@@ -1,5 +1,6 @@
 import datetime
 from uuid import UUID
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -20,6 +21,14 @@ class ShoutoutOut(BaseModel):
     text: str
     rating: int = Field(..., ge=0, le=5)
     createdAt: datetime.datetime
+
+
+class ShoutoutsOut(BaseModel):
+    shoutouts: List[ShoutoutOut]
+    shoutoutsCount: int | None = None
+
+    class Config:
+        orm_mode = True
 
 
 class Shoutout(BaseModel):
