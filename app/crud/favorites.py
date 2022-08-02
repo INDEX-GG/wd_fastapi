@@ -21,7 +21,7 @@ def read_favorites(user_id: int, db: Session, page: int = 1, page_limit: int = 6
     if page == 1:
         posts_count = query.count()
     posts = query.offset(offset).limit(page_limit).all()
-    return post_schema.Posts(posts=posts, postsCount=posts_count)
+    return post_schema.FavoritePosts(posts=posts, postsCount=posts_count)
 
 
 def delete_favorites(db: Session, user_id: int, obj_id: int):
