@@ -29,7 +29,15 @@ def create_vacancy(db: Session,  vacancy: vacancy_schema.VacancyCreate, user_id:
     return db_vacancy
 
 
-def get_vacancy_by_id(db: Session, vacancy_id: int, user_id: int):
+def get_vacancy_by_id(db: Session, vacancy_id: int):
+    db_vacancy = db.query(Vacancy).filter(Vacancy.id == vacancy_id).first()
+    if db_vacancy:
+        return db_vacancy
+    else:
+        return False
+
+
+def get_vacancy_by_id_and_user_id(db: Session, vacancy_id: int, user_id: int):
     db_vacancy = db.query(Vacancy).filter(Vacancy.id == vacancy_id, Vacancy.userId == user_id).first()
     if db_vacancy:
         return db_vacancy

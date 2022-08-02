@@ -28,6 +28,15 @@ def delete_favorites(db: Session, user_id: int, obj_id: int):
     return delete
 
 
+def delete_favorites_by_vacancy_id(db: Session, user_id: int, vacancy_id: int):
+    db_post = db.query(Post).where(Post.vacancyId == vacancy_id).first()
+    if db_post:
+        delete = db.query(Favorites).where(Favorites.userId == user_id,
+                                           Favorites.objId == db_post.id).delete(synchronize_session="evaluate")
+        db.commit()
+        return delete
+
+
 def get_favorites_posts_page_by_page(db: Session,
                                      page: int = 1,
                                      page_limit: int = 60):

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, UploadFile, Depends, File, HTTPException
 from typing import List, Optional
 from app.api.dependencies import get_db
-from app.crud import vacancy as vacancy_crud, file as file_crud, user as user_crud, post as post_crud
+from app.crud import vacancy as vacancy_crud, file as file_crud, user as user_crud, post as post_crud, \
+    favorites as favorites_crud
 from app.schemas import vacancy as vacancy_schema, response as response_schema, user as user_schema
 from sqlalchemy.orm import Session
 
@@ -43,9 +44,11 @@ async def create_vacancy(vacancy: vacancy_schema.VacancyCreate = Depends(),
 async def delete_vacancy_by_id(vacancy_id: int,
                                db: Session = Depends(get_db),
                                current_user: user_schema.UserOut = Depends(user_crud.get_current_user)):
-    db_vacancy = vacancy_crud.get_vacancy_by_id(db, vacancy_id, current_user.id)
+    db_vacancy = vacancy_crud.get_vacancy_by_id_and_user_id(db, vacancy_id, current_user.id)
     if not db_vacancy:
         raise HTTPException(status_code=404, detail="vacancy not found")
+
+    favorites_crud.delete_favorites_by_vacancy_id(db=db, user_id=current_user.id, vacancy_id=db_vacancy.id)
     post_crud.delete_post(db=db, vacancy=db_vacancy)
     file_crud.delete_files(db=db, vacancy_id=db_vacancy.id)
     vacancy_crud.delete_vacancy_by_id(db=db, vacancy=db_vacancy)
