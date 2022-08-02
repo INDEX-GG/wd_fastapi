@@ -55,3 +55,11 @@ class FavoritePost(PostsBase):
 
     class Config:
         orm_mode = True
+
+
+class FavoritePosts(BaseModel):
+    posts: List[FavoritePost]
+    postsCount: int | None = None
+
+    class Config:
+        orm_mode = True
