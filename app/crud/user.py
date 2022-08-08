@@ -168,6 +168,18 @@ def change_user_password(db: Session, user: User, new_password: str):
     db.commit()
 
 
+def check_phone_exist(db: Session, user_data: user_schema.ChangeUser):
+    instance = db.query(User).filter(User.phone == user_data.phone).first()
+    if instance:
+        return False
+
+
+def check_email_exist(db: Session, user_data: user_schema.ChangeUser):
+    instance = db.query(User).filter(User.email == user_data.email).first()
+    if instance:
+        return False
+
+
 def change_user_data(db: Session, user: User, user_data: user_schema.ChangeUser):
     if user_data.email:
         user.email = user_data.email
