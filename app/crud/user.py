@@ -172,12 +172,15 @@ def check_phone_exist(db: Session, user_data: user_schema.ChangeUser):
     instance = db.query(User).filter(User.phone == user_data.phone).first()
     if instance:
         return False
+    return True
 
 
 def check_email_exist(db: Session, user_data: user_schema.ChangeUser):
     instance = db.query(User).filter(User.email == user_data.email).first()
+    print(instance)
     if instance:
         return False
+    return True
 
 
 def change_user_data(db: Session, user: User, user_data: user_schema.ChangeUser):
