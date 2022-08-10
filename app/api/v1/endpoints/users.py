@@ -30,9 +30,11 @@ async def read_users_me(current_user: user_schema.UserOut = Depends(crud_user.ge
 async def read_users_me(new_user_data: user_schema.ChangeUser,
                         db: Session = Depends(get_db),
                         current_db_user=Depends(crud_user.get_current_db_user)):
-    if not crud_user.check_email_exist(user_data=new_user_data, db=db):
-        raise HTTPException(status_code=409, detail="User with this email already exist")
-    if not crud_user.check_phone_exist(user_data=new_user_data, db=db):
-        raise HTTPException(status_code=409, detail="User with this phone already exist")
+    if new_user_data.email:
+        if not crud_user.check_email_exist(user_data=new_user_data, db=db):
+            raise HTTPException(status_code=409, detail="User with this email already exist")
+    if new_user_data.phone:
+        if not crud_user.check_phone_exist(user_data=new_user_data, db=db):
+            raise HTTPException(status_code=409, detail="User with this phone already exist")
     crud_user.change_user_data(user=current_db_user, user_data=new_user_data, db=db)
     return {"message": "success"}
